@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -29,10 +30,8 @@ public class TaskServiceImpl implements TaskService {
         Task task = new Task();
         task.setTitle(taskDto.getTitle());
         task.setDescription(taskDto.getDescription());
-        task.setStatus(Status.PENDING);
+        task.setStatus(Status.IN_PROGRESS);
         task.setCreatedAt(LocalDateTime.now());
-        task.setUpdatedAt(taskDto.getUpdatedAt());
-        task.setCompletedAt(taskDto.getCompletedAt());
         task.setUser(user);
         return taskRepository.save(task);
     }
@@ -48,41 +47,61 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<TaskDto> viewAllTasks(Long userId) {
         List<Task> tasks = taskRepository.findTasksByUserId(userId);
+        return getTaskDtos(tasks);
+    }
+
+    private List<TaskDto> getTaskDtos(List<Task> tasks) {
         List<TaskDto> taskDtoList = new ArrayList<>();
-      BeanUtils.copyProperties(tasks, taskDtoList);
+        for (Task task: tasks){
+          TaskDto taskDto = new TaskDto();
+          BeanUtils.copyProperties(task, taskDto);
+          taskDtoList.add(taskDto);
+        }
         return taskDtoList;
     }
 
     @Override
-    public List<TaskDto> viewPendingTasks(Long userId, Status taskStatus) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
-        List<Task> tasks = taskRepository.findTasksByStatus()
+    public List<TaskDto> viewPendingTasks(Long userId) {
+        List<Task> taskList = taskRepository.findTasksByUserIdAndStatus(userId, Status.PENDING);
+        return getTaskDtos(taskList);
     }
 
     @Override
     public List<TaskDto> viewTasksInProgress(Long userId) {
-        return null;
+        List<Task> taskList = taskRepository.findTasksByUserIdAndStatus(userId, Status.IN_PROGRESS);
+        List<TaskDto> taskDtoList = new ArrayList<>();
+
+        BeanUtils.copyProperties(taskList, taskDtoList);
+        return taskDtoList;
     }
 
     @Override
     public List<TaskDto> viewDoneTasks(Long userId) {
-        return null;
+        List<Task> taskList = taskRepository.findTasksByUserIdAndStatus(userId, Status.DONE);
+        List<TaskDto> taskDtoList = new ArrayList<>();
+        BeanUtils.copyProperties(taskList, taskDtoList);
+        return taskDtoList;
     }
 
     @Override
-    public Task moveTaskToPending(Long taskId) {
-        return null;
+    public Task moveTaskToPending(Long taskId) {;
+        Task task = taskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Not found"));
+        task.setStatus(Status.PENDING);
+        task.setUpdatedAt(LocalDateTime.now());
+        return taskRepository.save(task);
     }
 
     @Override
     public Task moveTaskToDone(Long taskId) {
-        return null;
+        Task task = taskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Not found"));
+        task.setStatus(Status.DONE);
+        task.setUpdatedAt(LocalDateTime.now());
+        return taskRepository.save(task);
     }
 
     @Override
     public TaskDto viewTask(Long taskId) {
-        Task task = taskRepository.findById(taskId).get();
+        Optional<Task> task = taskRepository.findById(taskId);
         TaskDto taskDto = new TaskDto();
         BeanUtils.copyProperties(task, taskDto);
         return taskDto;

@@ -3,6 +3,7 @@ package com.taskmanager.taskmanagerapp.services.serviceImpl;
 import com.taskmanager.taskmanagerapp.dto.LoginDto;
 import com.taskmanager.taskmanagerapp.dto.SignUpDto;
 import com.taskmanager.taskmanagerapp.entities.User;
+import com.taskmanager.taskmanagerapp.exception.ResourceAlreadyExists;
 import com.taskmanager.taskmanagerapp.repositories.UserRepository;
 import com.taskmanager.taskmanagerapp.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User signUp(SignUpDto signUpDto) {
-
+        if(userRepository.findUserByUsername(signUpDto.getUsername()).isPresent()){
+            throw new ResourceAlreadyExists("Username already exists");
+        }
         User user = new User();
         BeanUtils.copyProperties(signUpDto, user);
         return userRepository.save(user);

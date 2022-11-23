@@ -28,7 +28,7 @@ public class Task {
     private String description;
 
     @Column(name = "status")
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     private Status status;
 
     @CreationTimestamp

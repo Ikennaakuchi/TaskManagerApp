@@ -42,9 +42,39 @@ public class TaskController {
         return new ResponseEntity<>(taskDto, HttpStatus.OK);
     }
 
+    @GetMapping("/pending-tasks/{userId}")
+    private ResponseEntity<List<TaskDto>> viewPending(@PathVariable Long userId){
+        List<TaskDto> taskDtoList = taskService.viewPendingTasks(userId);
+        return new ResponseEntity<>(taskDtoList, HttpStatus.OK);
+    }
+
+    @GetMapping("/done-tasks/{userId}")
+    private ResponseEntity<List<TaskDto>> viewDone(@PathVariable Long userId){
+        List<TaskDto> taskDtoList = taskService.viewDoneTasks(userId);
+        return new ResponseEntity<>(taskDtoList, HttpStatus.OK);
+    }
+
+    @GetMapping("/tasks-in-progress/{userId}")
+    private ResponseEntity<List<TaskDto>> viewTasksInProgress(@PathVariable Long userId){
+        List<TaskDto> taskDtoList = taskService.viewTasksInProgress(userId);
+        return new ResponseEntity<>(taskDtoList, HttpStatus.OK);
+    }
+
+    @PutMapping("/move-to-pending/{taskId}")
+    private ResponseEntity<String> moveToPending(@PathVariable Long taskId){
+        taskService.moveTaskToPending(taskId);
+        return new ResponseEntity<>("Task moved to pending", HttpStatus.OK);
+    }
+
+    @PutMapping("/move-to-done/{taskId}")
+    private ResponseEntity<String> moveToDone(@PathVariable Long taskId){
+        taskService.moveTaskToDone(taskId);
+        return new ResponseEntity<>("Task moved to done", HttpStatus.OK);
+    }
     @DeleteMapping("/delete/{taskId}")
     public ResponseEntity<String> deleteTask(@PathVariable Long taskId){
         taskService.deleteTask(taskId);
         return new ResponseEntity<>("Task deleted successfully", HttpStatus.NO_CONTENT);
     }
+
 }
