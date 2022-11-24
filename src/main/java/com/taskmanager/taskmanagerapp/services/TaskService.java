@@ -9,7 +9,7 @@ import java.util.List;
 public interface TaskService {
 
     Task createTask(TaskDto taskDto, Long userId);
-    Task editTask(Long taskId);
+    public Task editTask(Long taskId, TaskDto taskDto);
     List<TaskDto> viewAllTasks(Long userId);
     List<TaskDto> viewPendingTasks(Long userId);
     List<TaskDto> viewTasksInProgress(Long userId);

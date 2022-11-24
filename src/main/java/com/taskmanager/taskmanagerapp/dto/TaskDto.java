@@ -13,7 +13,7 @@ import java.util.Date;
 public class TaskDto {
     private String title;
     private String description;
-    private Status status;
+    private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime completedAt;

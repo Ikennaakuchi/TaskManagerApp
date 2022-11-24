@@ -30,23 +30,27 @@ public class TaskServiceImpl implements TaskService {
         Task task = new Task();
         task.setTitle(taskDto.getTitle());
         task.setDescription(taskDto.getDescription());
-        task.setStatus(Status.IN_PROGRESS);
+        task.setStatus(Status.IN_PROGRESS.name());
         task.setCreatedAt(LocalDateTime.now());
         task.setUser(user);
         return taskRepository.save(task);
     }
 
     @Override
-    public Task editTask(Long taskId) {
-        TaskDto taskDto = viewTask(taskId);
-        Task task = new Task();
+    public Task editTask(Long taskId, TaskDto taskDto) {
+        Task task = taskRepository.findById(taskId).get();
         BeanUtils.copyProperties(taskDto, task);
+        task.setStatus(Status.IN_PROGRESS.name());
+        task.setUpdatedAt(LocalDateTime.now());
         return taskRepository.save(task);
     }
 
     @Override
     public List<TaskDto> viewAllTasks(Long userId) {
         List<Task> tasks = taskRepository.findTasksByUserId(userId);
+        if(tasks.isEmpty()){
+            throw new ResourceNotFoundException("Not found");
+        }
         return getTaskDtos(tasks);
     }
 
@@ -62,31 +66,35 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskDto> viewPendingTasks(Long userId) {
-        List<Task> taskList = taskRepository.findTasksByUserIdAndStatus(userId, Status.PENDING);
+        List<Task> taskList = taskRepository.findTasksByUserIdAndStatus(userId, Status.PENDING.name());
+        if(taskList.isEmpty()){
+            throw new ResourceNotFoundException("Not found");
+        }
         return getTaskDtos(taskList);
     }
 
     @Override
     public List<TaskDto> viewTasksInProgress(Long userId) {
-        List<Task> taskList = taskRepository.findTasksByUserIdAndStatus(userId, Status.IN_PROGRESS);
-        List<TaskDto> taskDtoList = new ArrayList<>();
-
-        BeanUtils.copyProperties(taskList, taskDtoList);
-        return taskDtoList;
+        List<Task> taskList = taskRepository.findTasksByUserIdAndStatus(userId, Status.IN_PROGRESS.name());
+        if(taskList.isEmpty()){
+            throw new ResourceNotFoundException("Not found");
+        }
+        return getTaskDtos(taskList);
     }
 
     @Override
     public List<TaskDto> viewDoneTasks(Long userId) {
-        List<Task> taskList = taskRepository.findTasksByUserIdAndStatus(userId, Status.DONE);
-        List<TaskDto> taskDtoList = new ArrayList<>();
-        BeanUtils.copyProperties(taskList, taskDtoList);
-        return taskDtoList;
+        List<Task> taskList = taskRepository.findTasksByUserIdAndStatus(userId, Status.DONE.name());
+        if(taskList.isEmpty()){
+            throw new ResourceNotFoundException("Not found");
+        }
+        return getTaskDtos(taskList);
     }
 
     @Override
     public Task moveTaskToPending(Long taskId) {;
         Task task = taskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Not found"));
-        task.setStatus(Status.PENDING);
+        task.setStatus(Status.PENDING.name());
         task.setUpdatedAt(LocalDateTime.now());
         return taskRepository.save(task);
     }
@@ -94,14 +102,15 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task moveTaskToDone(Long taskId) {
         Task task = taskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Not found"));
-        task.setStatus(Status.DONE);
+        task.setStatus(Status.DONE.name());
         task.setUpdatedAt(LocalDateTime.now());
         return taskRepository.save(task);
     }
 
     @Override
     public TaskDto viewTask(Long taskId) {
-        Optional<Task> task = taskRepository.findById(taskId);
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(()-> new ResourceNotFoundException("Task not found"));
         TaskDto taskDto = new TaskDto();
         BeanUtils.copyProperties(task, taskDto);
         return taskDto;
@@ -111,5 +120,4 @@ public class TaskServiceImpl implements TaskService {
     public void deleteTask(Long taskId) {
         taskRepository.deleteById(taskId);
     }
-
 }

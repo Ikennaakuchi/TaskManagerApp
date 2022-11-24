@@ -25,8 +25,8 @@ public class TaskController {
     }
 
     @PostMapping("/edit-task/{taskId}")
-    public ResponseEntity<String> editTask(@PathVariable Long taskId){
-        taskService.editTask(taskId);
+    public ResponseEntity<String> editTask(@PathVariable Long taskId, @RequestBody TaskDto taskDto){
+        taskService.editTask(taskId, taskDto);
         return new ResponseEntity<>("Task updated successfully", HttpStatus.OK);
     }
 
