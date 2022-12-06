@@ -18,4 +18,5 @@ public interface TaskService {
     Task moveTaskToDone(Long taskId);
     TaskDto viewTask(Long taskId);
     void deleteTask(Long taskId);
+    void deleteTaskByTitle(String title);
 }

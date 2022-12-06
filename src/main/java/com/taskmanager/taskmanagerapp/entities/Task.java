@@ -3,13 +3,15 @@ package com.taskmanager.taskmanagerapp.entities;
 import com.taskmanager.taskmanagerapp.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
-
+@AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 @Entity
@@ -21,7 +23,7 @@ public class Task {
     @Column(name = "task_id")
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "title", unique = true)
     private String title;
 
     @Column(name = "description")

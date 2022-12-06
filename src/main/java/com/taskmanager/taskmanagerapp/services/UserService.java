@@ -11,4 +11,6 @@ public interface UserService {
     User signUp(SignUpDto signUpDto);
     User login(LoginDto loginDto);
     List<SignUpDto> getAllUsers();
+    void deleteUserbyU(String username);
+    void deleteUserById(Long userId);
 }

@@ -4,6 +4,7 @@ import com.taskmanager.taskmanagerapp.dto.LoginDto;
 import com.taskmanager.taskmanagerapp.dto.SignUpDto;
 import com.taskmanager.taskmanagerapp.entities.User;
 import com.taskmanager.taskmanagerapp.services.UserService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -37,5 +39,13 @@ public class UserController {
     public ResponseEntity<List<SignUpDto>> getAllUsers(){
         List<SignUpDto> signUpDtos = userService.getAllUsers();
         return new ResponseEntity<>(signUpDtos, HttpStatus.OK);
+    }
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<String> deleteUserById(@PathVariable Long userId){
+        userService.deleteUserById(userId);
+        return new ResponseEntity<>("Task deleted successfully", HttpStatus.NO_CONTENT);
+    }
+    public void deleteUser(String username){
+        userService.deleteUserbyU(username);
     }
 }
