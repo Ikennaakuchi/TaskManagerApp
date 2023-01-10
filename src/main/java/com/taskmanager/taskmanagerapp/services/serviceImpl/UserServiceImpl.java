@@ -4,10 +4,13 @@ import com.taskmanager.taskmanagerapp.dto.LoginDto;
 import com.taskmanager.taskmanagerapp.dto.SignUpDto;
 import com.taskmanager.taskmanagerapp.entities.User;
 import com.taskmanager.taskmanagerapp.exception.ResourceAlreadyExists;
+import com.taskmanager.taskmanagerapp.exception.ResourceNotFoundException;
 import com.taskmanager.taskmanagerapp.repositories.UserRepository;
 import com.taskmanager.taskmanagerapp.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,7 +35,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User login(LoginDto loginDto) {
-        User user = userRepository.findByUsernameAndPassword(loginDto.getUsername(), loginDto.getPassword()).orElse(null);
+        User user = userRepository.findByUsernameAndPassword(loginDto.getUsername(), loginDto.getPassword())
+                .orElseThrow(()-> new ResourceNotFoundException("Incorrect Username or password"));
         return user;
     }
 

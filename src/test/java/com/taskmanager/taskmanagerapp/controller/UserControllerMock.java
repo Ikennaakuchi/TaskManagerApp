@@ -6,12 +6,15 @@ import com.taskmanager.taskmanagerapp.dto.SignUpDto;
 import com.taskmanager.taskmanagerapp.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
@@ -34,7 +37,7 @@ public class UserControllerMock {
 
            String requestBody = mapper.writeValueAsString(newUser);
 
-           mockMvc.perform(MockMvcRequestBuilders.post("/user/sign-up", 42L)
+           mockMvc.perform(post("/user/sign-up")
                            .contentType("application/json").content(requestBody))
                    .andExpect(status().isCreated());
 
@@ -52,9 +55,9 @@ public class UserControllerMock {
 
             String requestBody = mapper.writeValueAsString(loginDto);
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/user/login", 42L)
+            mockMvc.perform(post("/user/login")
                             .contentType("application/json").content(requestBody))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isOk());
         }catch (Exception ex){
             ex.printStackTrace();
         }

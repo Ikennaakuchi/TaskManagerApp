@@ -30,9 +30,6 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
         User user = userService.login(loginDto);
-        if (user == null){
-            return new ResponseEntity<>("Incorrect Username or password", HttpStatus.BAD_REQUEST);
-        }
         return new ResponseEntity<>("Login Successful", HttpStatus.OK);
     }
     @GetMapping("/")

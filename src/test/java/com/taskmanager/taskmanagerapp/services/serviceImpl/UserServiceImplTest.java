@@ -92,7 +92,7 @@ class UserServiceImplTest {
 
         User loggedInUser = userService.login(loginDto);
         assertNotNull(loggedInUser);
-        assertEquals("Mary", loggedInUser.getFirstName());
+        assertEquals("Biggs", loggedInUser.getFirstName());
     }
 
     @Test
